@@ -1,0 +1,113 @@
+USER TABLE
+
+CREATE SEQUENCE users_id_seq
+INCREMENT 1
+START 1;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
+    name character varying(255) COLLATE pg_catalog."default",
+    email character varying(255) COLLATE pg_catalog."default",
+    phone_number character varying(20) COLLATE pg_catalog."default",
+    authentication_provider character varying(50) COLLATE pg_catalog."default",
+    role character varying(50) COLLATE pg_catalog."default",
+    permissions text[] COLLATE pg_catalog."default",
+    password character varying(50) COLLATE pg_catalog."default",
+    CONSTRAINT users_pkey PRIMARY KEY (id)
+)
+
+PRODUCT TABLE
+
+-- Table: public.products
+
+-- DROP TABLE IF EXISTS public.products;
+
+CREATE TABLE IF NOT EXISTS public.products
+(
+    id integer NOT NULL DEFAULT nextval('products_id_seq'::regclass),
+    name character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    cost numeric NOT NULL,
+    description text COLLATE pg_catalog."default",
+    type character varying(50) COLLATE pg_catalog."default",
+    created_by character varying(100) COLLATE pg_catalog."default",
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    image character varying COLLATE pg_catalog."default",
+    color character varying(100) COLLATE pg_catalog."default",
+    size character varying(3) COLLATE pg_catalog."default",
+    is_printed boolean,
+    CONSTRAINT products_pkey PRIMARY KEY (id)
+)
+
+
+ORDERS TABLE
+
+-- Table: public.orders
+
+-- DROP TABLE IF EXISTS public.orders;
+
+CREATE TABLE IF NOT EXISTS public.orders
+(
+    id integer NOT NULL DEFAULT nextval('orders_id_seq'::regclass),
+    user_id integer,
+    created_on timestamp without time zone,
+    CONSTRAINT orders_pkey PRIMARY KEY (id),
+    CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public.users (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.orders
+    OWNER to postgres;
+
+
+ORDER PRODUCTS TABLE
+
+-- Table: public.order_products
+
+-- DROP TABLE IF EXISTS public.order_products;
+
+CREATE TABLE IF NOT EXISTS public.order_products
+(
+    id integer NOT NULL DEFAULT nextval('order_products_id_seq'::regclass),
+    order_id integer,
+    product_id integer,
+    CONSTRAINT order_products_pkey PRIMARY KEY (id),
+    CONSTRAINT order_products_order_id_fkey FOREIGN KEY (order_id)
+        REFERENCES public.orders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT order_products_product_id_fkey FOREIGN KEY (product_id)
+        REFERENCES public.products (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.order_products
+    OWNER to postgres;
+
+
+FAVOURITES TABLE
+
+-- Table: public.favorites
+
+-- DROP TABLE IF EXISTS public.favorites;
+
+CREATE TABLE IF NOT EXISTS public.favorites
+(
+    id integer NOT NULL DEFAULT nextval('favorites_id_seq'::regclass),
+    user_id integer NOT NULL,
+    product_id integer NOT NULL,
+    added_at timestamp without time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT favorites_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.favorites
+    OWNER to postgres;
