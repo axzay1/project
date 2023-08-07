@@ -78,7 +78,6 @@ def unlike_product(user_id, product_id):
     connection = create_connection()
     try:
 
-        connection.settimeout(10);
         cursor = connection.cursor()
 
         # Check if the product is in the favorites list for the user
