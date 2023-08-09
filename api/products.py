@@ -1,10 +1,12 @@
 from flask import Blueprint, jsonify, request
+from flask_cors import cross_origin
 from connection.connection import create_connection
 bp = Blueprint('products', __name__)
 from sqlalchemy import or_, and_
 from models.product import Product  
 
 @bp.route('/api/getproducts', methods=['GET'])
+@cross_origin()
 def get_products():
     # Create a connection
     connection = create_connection()
@@ -30,6 +32,7 @@ def get_products():
         connection.close()
 
 @bp.route('/api/getproducttype/<string:product_type>', methods=['GET'])
+@cross_origin()
 def get_products_by_type(product_type):
     try:    
         # Create a connection to the database
@@ -58,6 +61,7 @@ def get_products_by_type(product_type):
         connection.close()
 
 @bp.route('/api/filter', methods=['GET'])
+@cross_origin()
 def filter_products():
     # Get query parameters from the request
     connection = create_connection()
@@ -133,6 +137,7 @@ def filter_products():
         connection.close()
 
 @bp.route('/api/orders', methods=['POST'])
+@cross_origin()
 def place_order():
     data = request.get_json()
     user_id = data.get('user_id')
@@ -169,6 +174,7 @@ def place_order():
         connection.close()
 
 @bp.route('/api/getorders', methods=['GET'])
+@cross_origin()
 def get_products_for_user():
     user_id = request.args.get('user_id')
     
